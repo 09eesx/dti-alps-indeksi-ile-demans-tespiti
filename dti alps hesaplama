@@ -1,0 +1,118 @@
+import os
+import tempfile
+import numpy as np
+import pylab as plt
+import nibabel as nb
+from dipy.segment.mask import median_otsu
+from dipy.core.gradients import gradient_table
+from dipy.reconst.shm import CsaOdfModel
+from dipy.direction import ProbabilisticDirectionGetter
+from dipy.reconst.csdeconv import ConstrainedSphericalDeconvModel
+from dipy.direction.peaks import peaks_from_model  # peaks_from_model doğru import yolu
+from dipy.tracking.local_tracking import LocalTracking
+from dipy.tracking import utils
+from fury import window, actor  # DIPY'nin visualization modülü FURY ile taşınmış olabilir
+from dipy.tracking.streamline import Streamlines
+from nilearn.plotting import plot_anat, plot_roi, plot_stat_map
+from nilearn.image import index_img, iter_img, new_img_like, math_img
+from xvfbwrapper import Xvfb
+from dipy.segment.mask import median_otsu
+
+
+import nibabel as nib
+import numpy as np
+import dipy.reconst.dti as dti
+import matplotlib.pyplot as plt
+
+fetch_sherbrooke_3shell()
+
+# DTI verisini yükle
+img = nib.load('/content/drive/MyDrive/archive (9)/HARDI193.nii.gz')
+data = img.get_fdata()
+
+# Gradientler ve b0 görüntüsünü ayır
+b0 = data[..., 0]  # B0 görüntüsü
+gradients = data[..., 1:]  # Gradientler
+
+# Gradient tablosunu oluştur
+bval_file_path = "/content/drive/MyDrive/archive (9)/HARDI193.bval"
+
+with open(bval_file_path, 'r') as f:
+  bvals = np.loadtxt(f)
+
+
+# .bvec dosyasının yolunu belirtin
+bvec_file_path = "//content//drive//MyDrive//archive (9)//HARDI193.bvec"
+
+# .bvec dosyasını okuyun
+with open(bvec_file_path, 'r') as f:
+    bvecs = np.loadtxt(f)
+gtab = dti.gradient_table(bvals, bvecs)
+
+# DTI modelini oluştur
+dti_model = dti.TensorModel(gtab)
+
+# DTI tensörünü uygula
+dti_fit = dti_model.fit(data)
+
+# FA indeksini hesapla
+fa = dti_fit.fa
+md = dti_fit.md
+ad = dti_fit.ad
+rd = dti_fit.rd
+
+print("FA:" ,fa[0:3])
+print("MD:", md[0:3])
+print("AD:", ad[0:3])
+print("RD:", rd[0:3])
+
+"""# FA görüntüsünü görselleştir
+axial_middle = data.shape[2] // 2
+plt.imshow(data[:, :, axial_middle, 0].T, cmap='gray', origin='lower')"""
+
+plt.subplot(1,4,1)
+plt.title('MD')
+plt.imshow(md[:, :, md.shape[2] // 2].T, cmap='gray', origin='lower')
+plt.axis('off')
+plt.savefig('MD_map.png', bbox_inches='tight')
+
+plt.subplot(1,4,2)
+plt.title('AD')
+plt.imshow(ad[:, :, ad.shape[2] // 2].T, cmap='gray', origin='lower')
+plt.axis('off')
+plt.savefig('AD_map.png', bbox_inches='tight')
+
+plt.subplot(1,4,3)
+plt.title('RD')
+plt.imshow(rd[:, :, rd.shape[2] // 2].T, cmap='gray', origin='lower')
+plt.axis('off')
+plt.savefig('RD_map.png', bbox_inches='tight')
+
+plt.subplot(1,4,4)
+plt.title('FA')
+plt.imshow(fa[:, :, fa.shape[2] // 2].T, cmap='gray', origin='lower')
+plt.savefig('FA_map.png', bbox_inches='tight')
+plt.axis('off')
+
+
+plt.show()
+
+#maskelenmiş veri ile ad ve rd hesaplama
+
+from dipy.segment.mask import median_otsu
+# ROI maskesi oluştur
+roi_mask, _ = median_otsu(data[..., 0], vol_idx=range(10, 50), numpass=1)
+
+roi_mask = roi_mask.astype(bool)
+
+# ROI maskesini uygulama
+# Maskeyi difüzyon metriklerine uygula
+ad_roi = ad[roi_mask]
+rd_roi = rd[roi_mask]
+
+alps_index = np.mean(ad_roi) / np.mean(rd_roi)
+print(f"ALPS İndeksi: {alps_index}")
+
+alps_index = (fa_mean + md_mean) / (ad_mean + rd_mean)
+print(f"ALPS İndeksi: {alps_index})
+

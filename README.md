@@ -29,16 +29,23 @@ DTI ALPS INDEKSİ İLE TESPİT EDİLECEK HASTALIKLAR:
 7. Beyin kanaması
 
    DTI INDEKSİ NASIL HESAPLANIR?
+![image](https://github.com/09eesx/dti-alps-indeksi-ile-demans-tespiti/assets/123479483/b960f1d2-fb16-41b9-9329-f1c8453bc3eb)
 
-   1. Difüzyon Tensörünün Hesaplanması:
+
+1. Difüzyon Tensörünün Hesaplanması:
 DTI görüntüleri, su moleküllerinin difüzyonunu farklı yönlerde ölçen bir dizi görüntüden oluşur. Bu görüntülerden, difüzyon tensörü adı verilen bir matris hesaplanır. Difüzyon tensörü ise, basit anlamda difüzyonu üç boyutlu ortamda tanımlayan matematiksel model olarak açıklanabilir. 
 Difüzyon tensörü, doku liflerinin yönü ve anizotropisi hakkında bilgi içerir.
 
 2. DTI-ALPS İndekslerinin Hesaplanması:
 Difüzyon tensöründen, FA, MD, AD ve RD gibi DTI-ALPS indeksleri hesaplanır. Bu indeksler, difüzyon tensörünün farklı bileşenlerinden türetilir.
 
+![image](https://github.com/09eesx/dti-alps-indeksi-ile-demans-tespiti/assets/123479483/9d013f93-e838-41f4-884d-afc4c78c890b)
+
+![image](https://github.com/09eesx/dti-alps-indeksi-ile-demans-tespiti/assets/123479483/4f79a92d-d440-45e7-bb08-a3fcef2a6807)
+
 3. Görsel Oluşturma:
 Hesaplanan DTI-ALPS indeksleri, genellikle renkli haritalar veya grafikler şeklinde görselleştirilir. Bu görseller, beyin dokusunun mikro yapısı hakkında bilgi edinmeyi kolaylaştırır.
+
 
 
 
